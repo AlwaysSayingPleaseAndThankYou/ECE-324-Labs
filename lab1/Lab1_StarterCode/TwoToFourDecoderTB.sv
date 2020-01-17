@@ -20,7 +20,8 @@ module TwoToFourDecoderTB; // testbench module has no ports
 	// generate stimulus
 	initial begin
 		#10 En = 0; w = 2'b00;
-		//added the rest of the truth table as test cases. 
+		//added the rest of the truth table as test cases.
+		// new test variables sent in every 10ns 
 		#10 En = 1; w = 2'b00;
 		#10 En = 0; w = 2'b01;
 		#10 En = 1; w = 2'b01;
