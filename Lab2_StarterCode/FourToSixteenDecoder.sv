@@ -26,6 +26,8 @@ logic [0:3] EnTwoToFourDecoder;
 TwoToFourDecoder TTFD0 (.w(w[1:0]), .En(EnTwoToFourDecoder[0]), .y(y[0:3]));
 // Replace this comment with four more instantiations of TwoToFourDecoder
 
+//prime decoder
+//TwoToFourDecoder TTFDPrime (.w(w[3:2]), .En(En), .y(y[0:3]));		Really not sure this is right
 //added more decoders
 //TwoToFourDecoder TTFD1 (.w(w[1:0]), .En(EnTwoToFourDecoder[1]), .y(y[0:3]));
 //TwoToFourDecoder TTFD2 (.w(w[1:0]), .En(EnTwoToFourDecoder[2]), .y(y[0:3]));
