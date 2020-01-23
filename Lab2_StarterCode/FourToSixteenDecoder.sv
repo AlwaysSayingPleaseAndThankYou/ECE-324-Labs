@@ -7,9 +7,9 @@
 // Module Name:  FourToSixteenDecoder
 // Project Name:
 //
-// Revision: 
+// Revision: Gus Crowley and Bryson Forte
 // Revision 0.01 - File Created
-// Additional Comments: 
+// Additional Comments: lab completed
 //
 //////////////////////////////////////////////////////////////////////////////////
 module FourToSixteenDecoder(
