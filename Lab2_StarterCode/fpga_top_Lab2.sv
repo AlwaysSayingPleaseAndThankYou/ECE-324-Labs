@@ -23,5 +23,10 @@ TwoToFourDecoder TTFD0 (
 	.En(BTNC), 
 	.y(LED)
 );
+//instantiating four to sixteen decoder
+//TODO: what on earth is this asking us to do??
+//FourToSixteenDecoder myDecode (
+	//.w())
+
 
 endmodule
