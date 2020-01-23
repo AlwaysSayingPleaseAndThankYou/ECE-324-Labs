@@ -12,21 +12,19 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
+//changes made here and fpga_top to allow for existing switches and LEDs
 module fpga_top_Lab2(
-    input logic [1:0] SW,
+    input logic [3:0] SW,
     input logic BTNC,
-    output logic [0:3] LED
+    output logic [0:15] LED
 );
 
-TwoToFourDecoder TTFD0 (
+//instatiates our 4-16 decoder
+FourToSixteenDecoder FT16D0 (
 	.w(SW), 
 	.En(BTNC), 
 	.y(LED)
 );
-//instantiating four to sixteen decoder
-//TODO: what on earth is this asking us to do??
-//FourToSixteenDecoder myDecode (
-	//.w())
 
 
 endmodule
