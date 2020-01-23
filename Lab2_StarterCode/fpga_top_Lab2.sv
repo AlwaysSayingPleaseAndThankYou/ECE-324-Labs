@@ -7,9 +7,9 @@
 // Module Name:  fpga_top_Lab2 
 // Project Name:
 //
-// Revision: 
+// Revision: Gus Crowley and Bryson Forte
 // Revision 0.01 - File Created
-// Additional Comments: 
+// Additional Comments: lab completed and checked off
 //
 //////////////////////////////////////////////////////////////////////////////////
 //changes made here and fpga_top to allow for existing switches and LEDs
