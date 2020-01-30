@@ -9,8 +9,8 @@ module top_barrel_shifter(
 	barrel_shifter board_shifter (
 		.data(SW),
 		.BTNC(BTNC),
-		.BTNR(BTNR),
-		.BTNL(BTNL),
+		.BTNR(BTNL),
+		.BTNL(BTNR),
 		.shout(LED)
 		);
 
