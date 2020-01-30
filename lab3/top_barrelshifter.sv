@@ -6,10 +6,10 @@ module top_barrel_shifter(
 	);
 
 	barrel_shifter board_shifter (
-		data(sw),
-		BTNR(BTNR),
-		BTNL(BTNL),
-		shout(LED)
+		.data(sw),
+		.BTNR(BTNR),
+		.BTNL(BTNL),
+		.shout(LED)
 		);
 
 endmodule : top_barrel_shifter
