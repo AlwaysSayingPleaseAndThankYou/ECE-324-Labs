@@ -2,6 +2,7 @@ module barrel_shifter(
 	input logic [15:0] data,
 	input logic BTNR,
 	input logic BTNL,
+	input logic FAKE
 	output logic [15:0] shout
 	);
 
