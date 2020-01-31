@@ -9,11 +9,14 @@ module barrel_shifter(
 	//assign shout[15:0] = BTNR ? {data[0], data[15:1]} : (BTNL
 	// ? {data[14:0], data[15]}: data[15:0]);
 
+
+
 	//ec
 	assign shout[15:0] =
 	 (BTNR & BTNC) ? {data[1:0], data[15:2]} :
 	 (BTNL & BTNC) ? {data[13:0], data[15:14]}: //data[15:0];
 	 (BTNR) ? {data[0], data[15:1]}:
 	 (BTNL) ? {data[14:0], data[15]} : data[15:0];
+
 
 endmodule : barrel_shifter 
