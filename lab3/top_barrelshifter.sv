@@ -2,7 +2,7 @@ module top_barrel_shifter(
 	input logic [15:0] SW, //input data
 	input logic BTNR, //BTNR
 	input logic BTNL, //BTNL
-	input logic BNTC,
+	input logic BTNC,
 	output logic [0:15] LED //output
 	);
 
