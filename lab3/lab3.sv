@@ -6,8 +6,8 @@ module barrel_shifter(
 	output logic [15:0] shout
 	);
 
-	assign shout[15:0] = BTNR ? {data[0], data[15:1]} : (BTNL
-	 ? {data[14:0], data[15]}: data[15:0]);
+	//assign shout[15:0] = BTNR ? {data[0], data[15:1]} : (BTNL
+	 //? {data[14:0], data[15]}: data[15:0]);
 
 	//ec
 	assign shout[15:0] =
