@@ -8,15 +8,14 @@
    07 Sep 2018 Tom Pritchard/WSUV: added separate top level module.
 */
   
-module alu(
-	input logic [3:0] a, b,   // two 4-bit operands
-	input logic Cin,          // carry in
-	input logic [3:0] opcode, // 4-bit opcode
-
-	output logic aGTb,        // 1 when a > b
-	output logic fEq0,        // 1 when f is zero
-	output logic [7:0] f,	  // 8 bit output
-    output logic Cout         // carry out
+module alu (
+  input  logic [3:0] a, b  , // two 4-bit operands
+  input  logic       Cin   , // carry in
+  input  logic [3:0] opcode, // 4-bit opcode
+  output logic       aGTb  , // 1 when a > b
+  output logic       fEq0  , // 1 when f is zero
+  output logic [7:0] f     , // 8 bit output
+  output logic       Cout    // carry out
 );
 
 
@@ -25,9 +24,16 @@ module alu(
 // **********************************
 // The following are temporary assign statements; you need to change all of these.
 
-assign f[7:0] = {a[3:0], b[3:0]};
-assign Cout = Cin;
-assign aGTb = Cin;
-assign fEq0 = Cin;
-
-endmodule
+  assign f[7:0] = {a[3:0], b[3:0]};
+  assign Cout   = Cin;
+  assign aGTb   = Cin;
+  assign fEq0   = Cin;
+  always@(*) begin
+    case(opcode):
+      4'b0110: f = a | b;
+      4'b1000: f = a ^ b;
+      4'b1011: a = {a[0],a[3:1]}
+      4'b1101: a = {Cin, a[3:1]}
+      4'b1111: a = {1'b0, a[3:1]}
+    end
+  endmodule
