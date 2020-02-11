@@ -30,10 +30,10 @@ module alu (
   assign fEq0   = Cin;
   always@(*) begin
     case(opcode):
-      4'b0110: f = a | b;
-      4'b1000: f = a ^ b;
-      4'b1011: a = {a[0],a[3:1]}
-      4'b1101: a = {Cin, a[3:1]}
-      4'b1111: a = {1'b0, a[3:1]}
-    end
-  endmodule
+      4'b0110: f = {4'b0000, a | b};
+      4'b1000: f = {4'b0000, a ^ b};
+      4'b1011: f = {4'b0000, a[0],a[3:1]};
+      4'b1101: f = {4'b0000, Cin, a[3:1]};
+      4'b1111: f = {4'b0000, 1'b0, a[3:1]};
+      end
+      endmodule
