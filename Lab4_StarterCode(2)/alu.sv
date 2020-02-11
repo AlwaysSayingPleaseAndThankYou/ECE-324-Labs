@@ -29,15 +29,15 @@ module alu (
   always@(*)
     if (opcode <= 3)
       Cout = f[4];
-    else if(opcode >= 4 & opcode <= 11
+    else if(opcode >= 4 & opcode <= 11)
       Cout = Cin;
-      else if(opcode == 12 | opcode == 14)
+    else if(opcode == 12 | opcode == 14)
       Cout = a[3];
-      else
+    else
       Cout = a[0];
 
 
-      assign aGTb   = (a > b )? 1 : 0;
+      assign aGTb   = (a > b ) ? 1 : 0;
       assign fEq0   = (f==8'b00000000) ? 1 : 0;
       always@(*)
       case(opcode):
@@ -51,10 +51,11 @@ module alu (
         4'b0111: f = ~a;
         4'b1000: f = a ^ b; //8
         4'b1001: f = a & ~b;
-        4'b1011: f = {a[0],a[3:1]}; //b
+        4'b1010: f = {a[2:0], a[3]};
+        4'b1011: f = {a[0], a[3:1]}; //b
         4'b1100: f = {a[2:0], Cin}; //c
         4'b1101: f = {Cin, a[3:1]}; //D
-        4'b1110: f = {a[2:0],1'b0}; //e
+        4'b1110: f = {a[2:0], 1'b0}; //e
         4'b1111: f = {1'b0, a[3:1]}; //F
 
         endmodule
