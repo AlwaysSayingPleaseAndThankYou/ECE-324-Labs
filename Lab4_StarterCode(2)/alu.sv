@@ -24,10 +24,10 @@ module alu (
 // **********************************
 // The following are temporary assign statements; you need to change all of these.
 
-  assign f[7:0] = {a[3:0], b[3:0]};
-  assign Cout   = Cin;
-  assign aGTb   = Cin;
-  assign fEq0   = Cin;
+//  assign f[7:0] = {a[3:0], b[3:0]};
+  assign Cout   = (f > 15) 1: 0;
+  assign aGTb   = (a >b )? 1 : 0;
+  assign fEq0   = (f==8'b00000000) ? 1 : 0;
   always@(*) begin
     case(opcode):
       4'b0110: f = {4'b0000, a | b};
