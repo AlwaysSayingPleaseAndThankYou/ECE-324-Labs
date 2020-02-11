@@ -6,6 +6,7 @@
    07 Jan 2018 Tom Pritchard/WSUV: reversed order of sseg's, made top segment bit 0.
    14 Jun 2018 Tom Pritchard/WSUV: converted to SystemVerilog.
    07 Sep 2018 Tom Pritchard/WSUV: added separate top level module.
+   Feb - 11 - 2020: Gus Crowley and Bryson Forte lab completed
 */
   
 module alu (
@@ -22,11 +23,8 @@ module alu (
 // **********************************
 // Generate the ALU logic
 // **********************************
-// The following are temporary assign statements; you need to change all of these.
-
-//  assign f[7:0] = {a[3:0], b[3:0]};
-  // assign Cout   = (f > 15) ? 1: 0;
-  always@(*)
+  always@(*) 
+  //if statements used to conver a broad array of situations at once
     if (opcode <= 3)
       Cout = f[4];
     else if(opcode >= 4 & opcode <= 11)
@@ -36,11 +34,13 @@ module alu (
     else
       Cout = a[0];
 
-
+      //extra verbose assign for no reason
       assign aGTb   = (a > b ) ? 1 : 0;
+      //check if f = 0 and set flab
       assign fEq0   = (f==8'b00000000) ? 1 : 0;
       always@(*)
-      case(opcode):
+      case(opcode)
+        //ALU logic
         4'b0000: f = a + b;
         4'b0001: f = a + b + Cin;
         4'b0010: f = a -b;
