@@ -19,7 +19,7 @@ module Lab5_Waterfall(
 	output logic [15:0] LED // 16 red LEDs above switches on Nexys4DDR
 );
 
-localparam  BITS_IN_TIME_BASE_CNTR = 11;
+localparam  BITS_IN_TIME_BASE_CNTR = 7;
 
 // Declarations
 logic timeBaseTick; // on for one clock cycle every 1/(2**17) of the fall time
@@ -34,11 +34,13 @@ integer i; // loop counter
 // With 11 bits, this counter generates a timeBaseTick every 2048/100,000,000 = 20.48us,
 //    which will result in a fall time of 20.48us * (2**17) ~= 2.68 seconds,
 //    which will result in a fall distance of 0.5 * 32 * (2.68**2) ~= 115 feet.
-free_run_bin_counter #(.N(BITS_IN_TIME_BASE_CNTR)) frbc0(
-	.clk(CLK100MHZ), 
-	.max_tick(timeBaseTick), // on for one clock cycle every 1/(2**17) of the fall time
-	.q() // count value not used
-);
+//free_run_bin_counter #(.N(BITS_IN_TIME_BASE_CNTR)) frbc0(
+	//.clk(CLK100MHZ), 
+	//.max_tick(timeBaseTick), // on for one clock cycle every 1/(2**17) of the fall time
+	//.q() // count value not used
+//);
+
+mod_m_counter #(.N(BITS_IN_TIME_BASE_CNTR)) frbc0(.clk, .max_tick(timeBaseTick),.q())
 
 // Generate the time it would take to fall from the zenith to the current location,
 //    normalized to the total falling time (so 0<=t<1, which is why the range values are negative).
