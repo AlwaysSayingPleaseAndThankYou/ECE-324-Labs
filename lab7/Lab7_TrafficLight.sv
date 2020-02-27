@@ -40,20 +40,21 @@ logic roadB_GreenLight, roadB_YellowLight, roadB_RedLight;
 logic LED_On;
 logic [7:0] sseg2, sseg1, sseg0;
 logic request_out_east_west, request_out_north_south;
+logic BTNR, BTNL, BTNU, BTND;
 
 //OR east west and north south
-assign east-west = BTNR | BTNL;
-assign north-south = BTNU | BTND;
+assign east_west = BTNR | BTNL;
+assign north_south = BTNU | BTND;
 
 free_run_shift_reg #(.N(4)) signal_cleaner_east_west(
 	.clk(CLK100MHZ),
-	.s_in(east-west),
+	.s_in(east_west),
 	.s_out(request_out_east_west)
 );
 
 free_run_shift_reg #(.N(4)) signal_cleaner_north_south(
 	.clk(CLK100MHZ),
-	.s_in (north-south),
+	.s_in (north_south),
 	.s_out(request_out_north_south)
 	);
 
