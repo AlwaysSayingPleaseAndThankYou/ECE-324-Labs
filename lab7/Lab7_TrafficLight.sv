@@ -39,7 +39,17 @@ logic roadA_GreenLight, roadA_YellowLight, roadA_RedLight;
 logic roadB_GreenLight, roadB_YellowLight, roadB_RedLight;
 logic LED_On;
 logic [7:0] sseg2, sseg1, sseg0;
+logic request_out;
 
+//OR east west and north south
+assign east-west = BTNR | BTNL;
+assign north-south = BTNU | BTND;
+
+free_run_shift_reg #(.N(4)) signal_cleaner(
+	.clk(CLK100MHZ),
+	.s_in(east-west | north-south),
+	.s_out(request_out)
+	);
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Timers
@@ -59,6 +69,7 @@ always_ff @ (posedge CLK100MHZ) begin
 	else if (oneSecondTick)          trafficLightTimer <= trafficLightTimer + 1;
 	else                             trafficLightTimer <= trafficLightTimer;
 end
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -127,6 +138,7 @@ always_comb begin
 end
 
 always_ff @(posedge CLK100MHZ) begin
+	//TODO: modify here
    state_TrafficLight <= nextState_TrafficLight;
 end
 
