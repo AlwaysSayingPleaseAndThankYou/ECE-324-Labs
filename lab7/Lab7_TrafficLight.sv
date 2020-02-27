@@ -97,7 +97,7 @@ always_comb begin
 				nextState_TrafficLight = yellowA;
 				initializeTrafficLightTimer = 1;
 			end
-			else if(request_out_east_west & trafficLightTimer>=6) begin
+			else if(request_out_east_west & !request_out_north_south & trafficLightTimer>=6) begin
 				nextState = yellowA;
 				initializeTrafficLightTimer = 1;
 		end
@@ -124,7 +124,7 @@ always_comb begin
 				nextState_TrafficLight = yellowB;
 				initializeTrafficLightTimer = 1;
 			end
-			else if(request_out_north_south & trafficLightTimer >=6) begin
+			else if(request_out_north_south & !request_out_east_west & trafficLightTimer >=6) begin
 				nextState = yellowA;
 				initializeTrafficLightTimer = 1;
 		end
