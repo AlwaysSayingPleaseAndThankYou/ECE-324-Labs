@@ -39,16 +39,22 @@ logic roadA_GreenLight, roadA_YellowLight, roadA_RedLight;
 logic roadB_GreenLight, roadB_YellowLight, roadB_RedLight;
 logic LED_On;
 logic [7:0] sseg2, sseg1, sseg0;
-logic request_out;
+logic request_out_east_west, request_out_north_south;
 
 //OR east west and north south
 assign east-west = BTNR | BTNL;
 assign north-south = BTNU | BTND;
 
-free_run_shift_reg #(.N(4)) signal_cleaner(
+free_run_shift_reg #(.N(4)) signal_cleaner_east_west(
 	.clk(CLK100MHZ),
-	.s_in(east-west | north-south),
-	.s_out(request_out)
+	.s_in(east-west),
+	.s_out(request_out_east_west)
+);
+
+free_run_shift_reg #(.N(4)) signal_cleaner_north_south(
+	.clk(CLK100MHZ),
+	.s_in (north-south),
+	.s_out(request_out_north_south)
 	);
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -81,13 +87,18 @@ always_comb begin
 	roadA_GreenLight = OFF; roadA_YellowLight = OFF; roadA_RedLight = OFF; // default road A lights are off
 	roadB_GreenLight = OFF; roadB_YellowLight = OFF; roadB_RedLight = OFF; // default road B lights are off
 	
+
+
 	case (state_TrafficLight)
 		greenA: begin
 			roadA_GreenLight = ON; roadB_RedLight = ON;
-			if (oneSecondTick & trafficLightTimer >= 8) begin // 8 seconds
+			if (oneSecondTick & trafficLightTimer >= 9) begin // 8 seconds
 				nextState_TrafficLight = yellowA;
 				initializeTrafficLightTimer = 1;
 			end
+			else if(request_out_east_west & trafficLightTimer>=6) begin
+				nextState = yellowA;
+				initializeTrafficLightTimer = 1;
 		end
 		
 		yellowA: begin
@@ -112,6 +123,9 @@ always_comb begin
 				nextState_TrafficLight = yellowB;
 				initializeTrafficLightTimer = 1;
 			end
+			else if(request_out_north_south & trafficLightTimer >=6) begin
+				nextState = yellowA;
+				initializeTrafficLightTimer = 1;
 		end
 		
 		yellowB: begin
@@ -138,7 +152,6 @@ always_comb begin
 end
 
 always_ff @(posedge CLK100MHZ) begin
-	//TODO: modify here
    state_TrafficLight <= nextState_TrafficLight;
 end
 
