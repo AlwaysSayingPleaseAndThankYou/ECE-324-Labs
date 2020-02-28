@@ -19,6 +19,7 @@ Revisions:
 module Lab7_TrafficLight(
 	input logic CLK100MHZ,               // Nexys4DDR's 100 MHz clock
 	input logic SW15,SW14,SW13,SW12,SW11,SW10,SW9,SW8,SW7,SW6,SW5,SW4,SW3,SW2,SW1,SW0, // 16 switches to control LED brightness
+	input logic BTNR, BTNL, BTNU, BTND,
 	output logic LED16_G, LED16_R,       // green and red color signals on Nexys4DDR's right RGB LED
 	output logic LED17_G, LED17_R,       // green and red color signals on Nexys4DDR's left  RGB LED
 	output logic [7:0] AN,               // negative true anodes   for Nexys4DDR's 7-segment displays
@@ -40,18 +41,17 @@ logic roadB_GreenLight, roadB_YellowLight, roadB_RedLight;
 logic LED_On;
 logic [7:0] sseg2, sseg1, sseg0;
 logic request_out_east_west, request_out_north_south;
-logic BTNR, BTNL, BTNU, BTND;
 
 
 free_run_shift_reg #(.N(4)) signal_cleaner_east_west(
 	.clk(CLK100MHZ),
-	.s_in(BTNR || BTNL),
+	.s_in(BTNR | BTNL),
 	.s_out(request_out_east_west)
 );
 
 free_run_shift_reg #(.N(4)) signal_cleaner_north_south(
 	.clk(CLK100MHZ),
-	.s_in (BTNU || BTND),
+	.s_in (BTNU | BTND),
 	.s_out(request_out_north_south)
 	);
 
