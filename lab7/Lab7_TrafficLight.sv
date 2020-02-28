@@ -126,7 +126,7 @@ always_comb begin
 				initializeTrafficLightTimer = 1;
 			end
 			else if(request_out_north_south & oneSecondTick & trafficLightTimer >=6) begin
-				nextState_TrafficLight = yellowA;
+				nextState_TrafficLight = yellowB;
 				initializeTrafficLightTimer = 1;
 			end
 		end
