@@ -42,19 +42,16 @@ logic [7:0] sseg2, sseg1, sseg0;
 logic request_out_east_west, request_out_north_south;
 logic BTNR, BTNL, BTNU, BTND;
 
-//OR east west and north south
-assign east_west = BTNR | BTNL;
-assign north_south = BTNU | BTND;
 
 free_run_shift_reg #(.N(4)) signal_cleaner_east_west(
 	.clk(CLK100MHZ),
-	.s_in(east_west),
+	.s_in(BTNR || BTNL),
 	.s_out(request_out_east_west)
 );
 
 free_run_shift_reg #(.N(4)) signal_cleaner_north_south(
 	.clk(CLK100MHZ),
-	.s_in (north_south),
+	.s_in (BTNU || BTND),
 	.s_out(request_out_north_south)
 	);
 
@@ -97,7 +94,7 @@ always_comb begin
 				nextState_TrafficLight = yellowA;
 				initializeTrafficLightTimer = 1;
 			end
-			else if(request_out_east_west & oneSecondTick & trafficLightTimer>=6) begin
+			else if(request_out_north_south & (oneSecondTick & trafficLightTimer>=6)) begin
 				nextState_TrafficLight = yellowA;
 				initializeTrafficLightTimer = 1;
 			end
@@ -121,14 +118,20 @@ always_comb begin
 
 		greenB: begin
 		roadB_GreenLight = ON; roadA_RedLight = ON;
-			if (oneSecondTick & trafficLightTimer >= 9) begin // 6 seconds
+			if(request_out_east_west & (oneSecondTick & trafficLightTimer >=6)) begin
 				nextState_TrafficLight = yellowB;
 				initializeTrafficLightTimer = 1;
 			end
-			else if(request_out_north_south & oneSecondTick & trafficLightTimer >=6) begin
+			else if (oneSecondTick & trafficLightTimer >= 9) begin // 6 seconds
 				nextState_TrafficLight = yellowB;
 				initializeTrafficLightTimer = 1;
 			end
+			else if(!request_out_east_west & !request_out_north_south) begin
+				nextState_TrafficLight = yellowB;
+				initializeTrafficLightTimer = 1;
+			end
+
+
 		end
 		
 		yellowB: begin
