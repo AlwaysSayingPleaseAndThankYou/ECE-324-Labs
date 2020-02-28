@@ -59,7 +59,8 @@ free_run_bin_counter #(.N(BITS_IN_CLK_COUNTER)) clkCounter_instance(
 // Inputs to the TTL design from the buttons
 // ***************************************************
 //assign swingLeft =  BTNL;
-free_run_shift_reg #(.N(4)) swingLeft_instance(
+//instantiate free run
+free_run_shift_reg #(.N(4)) swingleft_1(
 	.clk(CLK100MHZ),
 	.s_in(BTNL),
 	.s_out(swingLeft)
@@ -67,7 +68,7 @@ free_run_shift_reg #(.N(4)) swingLeft_instance(
 	
 	
 //assign swingRight = BTNR;
-free_run_shift_reg #(.N(4)) swingRight_instance(
+free_run_shift_reg #(.N(4)) swingRight_1(
 	.clk(CLK100MHZ),
 	.s_in(BTNR),
 	.s_out(swingRight)
@@ -75,7 +76,7 @@ free_run_shift_reg #(.N(4)) swingRight_instance(
 
 
 //assign toss = BTNC;
-free_run_shift_reg #(.N(4)) toss_instance(
+free_run_shift_reg #(.N(4)) toss_1(
 	.clk(CLK100MHZ),
 	.s_in(BTNC),
 	.s_out(toss)
@@ -83,7 +84,7 @@ free_run_shift_reg #(.N(4)) toss_instance(
 
 // ***** 1. REPLACE EACH OF THE ABOVE THREE ASSIGN STATEMENTS WITH SOMETHING LIKE THE FOLLOWING:
 /*
-free_run_shift_reg #(.N(4)) swingLeft_instance(
+free_run_shift_reg #(.N(4)) swingleft_1(
 	.clk(CLK100MHZ),
 	.s_in(BTNL),
 	.s_out(swingLeft)
