@@ -19,7 +19,7 @@ Revisions:
 module Lab7_TrafficLight(
 	input logic CLK100MHZ,               // Nexys4DDR's 100 MHz clock
 	input logic SW15,SW14,SW13,SW12,SW11,SW10,SW9,SW8,SW7,SW6,SW5,SW4,SW3,SW2,SW1,SW0, // 16 switches to control LED brightness
-	input logic BTNR, BTNL, BTNU, BTND,
+	input logic BTNR, BTNL, BTNU, BTND, BTNC,
 	output logic LED16_G, LED16_R,       // green and red color signals on Nexys4DDR's right RGB LED
 	output logic LED17_G, LED17_R,       // green and red color signals on Nexys4DDR's left  RGB LED
 	output logic [7:0] AN,               // negative true anodes   for Nexys4DDR's 7-segment displays
@@ -33,8 +33,8 @@ parameter OFF = 0, ON = 1;
 logic  [26:0] trafficLightPrescaler; // 27 bits needed for a 100 MHz clock	
 logic oneSecondTick;
 logic [3:0] trafficLightTimer; 
-typedef enum {greenA, yellowA, redA, greenB, yellowB, redB} state_type;	// 6 state names, numbered 0 to 5
-state_type state_TrafficLight = yellowB, nextState_TrafficLight;
+typedef enum {greenA, yellowA, redA, greenB, yellowB, redB, flashRedOn, flashRedOff} state_type;	// 8 state names, numbered 0 to 5
+state_type state_TrafficLight = flashRedOn, nextState_TrafficLight;
 logic initializeTrafficLightTimer;
 logic roadA_GreenLight, roadA_YellowLight, roadA_RedLight;
 logic roadB_GreenLight, roadB_YellowLight, roadB_RedLight;
@@ -54,6 +54,12 @@ free_run_shift_reg #(.N(4)) signal_cleaner_north_south(
 	.clk(CLK100MHZ),
 	.s_in (BTNU || BTND),
 	.s_out(car_at_roadA)
+	);
+	
+free_run_shift_reg #() signal_cleaner_stop(
+	.clk(CLK100MHZ),
+	.s_in (BTNC),
+	.s_out(request_out_stop)
 	);
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,7 +97,11 @@ always_comb begin
 	case (state_TrafficLight)
 		greenA: begin
 			roadA_GreenLight = ON; roadB_RedLight = ON;
-			if (oneSecondTick & trafficLightTimer >= 9) begin // 8 seconds
+			if (request_out_stop) begin
+	           nextState_TrafficLight = flashRedOn;
+	           initializeTrafficLightTimer = 1;
+            end
+			else if (oneSecondTick & trafficLightTimer >= 9) begin // 8 seconds
 				nextState_TrafficLight = yellowA;
 				initializeTrafficLightTimer = 1;
 			end
@@ -103,7 +113,12 @@ always_comb begin
 		
 		yellowA: begin
 			roadA_YellowLight = ON; roadB_RedLight = ON;
-			if (oneSecondTick & trafficLightTimer >= 2) begin // 2 seconds
+			roadA_GreenLight = ON; roadB_RedLight = ON;
+			if (request_out_stop) begin
+	           nextState_TrafficLight = flashRedOn;
+	           initializeTrafficLightTimer = 1;
+            end
+			else if (oneSecondTick & trafficLightTimer >= 2) begin // 2 seconds
 				nextState_TrafficLight = redA;
 				initializeTrafficLightTimer = 1;
 			end
@@ -111,7 +126,11 @@ always_comb begin
 		
 		redA: begin
 			roadA_RedLight = ON; roadB_RedLight = ON;
-			if (oneSecondTick & trafficLightTimer >= 2) begin // 2 seconds
+			if (request_out_stop) begin
+	           nextState_TrafficLight = flashRedOn;
+	           initializeTrafficLightTimer = 1;
+            end
+			else if (oneSecondTick & trafficLightTimer >= 2) begin // 2 seconds
 				nextState_TrafficLight = greenB;
 				initializeTrafficLightTimer = 1;
 			end
@@ -119,12 +138,16 @@ always_comb begin
 
 		greenB: begin
 		roadB_GreenLight = ON; roadA_RedLight = ON;
-			if ( oneSecondTick & trafficLightTimer >= 9 ) begin // 6 seconds
+		
+	        if (request_out_stop) begin
+	           nextState_TrafficLight = flashRedOn;
+	           initializeTrafficLightTimer = 1;
+            end	
+			else if ( oneSecondTick & trafficLightTimer >= 9 ) begin // 6 seconds
 				nextState_TrafficLight = yellowB;
 				initializeTrafficLightTimer = 1;
 			end
-			
-			if ( oneSecondTick & trafficLightTimer >= 6 & (car_at_roadA | !car_at_roadB) ) begin // 9 seconds
+			else if ( oneSecondTick & trafficLightTimer >= 6 & (car_at_roadA | !car_at_roadB) ) begin // 9 seconds
 				nextState_TrafficLight = yellowB;
 				initializeTrafficLightTimer = 1;
 			end
@@ -134,7 +157,11 @@ always_comb begin
 		
 		yellowB: begin
 			roadB_YellowLight = ON; roadA_RedLight = ON;
-			if (oneSecondTick & trafficLightTimer >= 2) begin // 2 seconds
+			if (request_out_stop) begin
+	           nextState_TrafficLight = flashRedOn;
+	           initializeTrafficLightTimer = 1;
+            end
+			else if (oneSecondTick & trafficLightTimer >= 2) begin // 2 seconds
 				nextState_TrafficLight = redB;
 				initializeTrafficLightTimer = 1;
 			end
@@ -142,11 +169,41 @@ always_comb begin
 		
 		redB: begin
 			roadB_RedLight = ON; roadA_RedLight = ON;
-			if (oneSecondTick & trafficLightTimer >= 2) begin // 2 seconds
+			if (request_out_stop) begin
+	           nextState_TrafficLight = flashRedOn;
+	           initializeTrafficLightTimer = 1;
+            end
+			else if (oneSecondTick & trafficLightTimer >= 2) begin // 2 seconds
 				nextState_TrafficLight = greenA;
 				initializeTrafficLightTimer = 1;
 			end
 		end
+		
+		flashRedOn: begin
+	       roadB_RedLight = ON; roadA_RedLight = ON;
+	       if (request_out_stop) begin
+	           nextState_TrafficLight = yellowB;
+		       initializeTrafficLightTimer = 1;
+	       end
+	       else if (oneSecondTick & trafficLightTimer >= 1) begin // 1 seconds
+		       nextState_TrafficLight = flashRedOff;
+		       initializeTrafficLightTimer = 1;
+	       end
+        end
+
+
+        flashRedOff: begin
+	       roadB_RedLight = OFF; roadA_RedLight = OFF;
+	       if (request_out_stop) begin
+		      nextState_TrafficLight = yellowB;
+		      initializeTrafficLightTimer = 1;
+	       end
+	       else if (oneSecondTick & trafficLightTimer >= 1) begin // 1 seconds
+		      nextState_TrafficLight = flashRedOn;
+	          initializeTrafficLightTimer = 1;
+	       end
+        end
+		
 
 		default: begin
 			nextState_TrafficLight = yellowB; // get illegal states to a known state
