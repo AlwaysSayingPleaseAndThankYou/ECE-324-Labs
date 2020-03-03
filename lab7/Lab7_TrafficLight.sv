@@ -40,19 +40,20 @@ logic roadA_GreenLight, roadA_YellowLight, roadA_RedLight;
 logic roadB_GreenLight, roadB_YellowLight, roadB_RedLight;
 logic LED_On;
 logic [7:0] sseg2, sseg1, sseg0;
-logic request_out_east_west, request_out_north_south;
+logic car_at_roadB, car_at_roadA;
+
 
 
 free_run_shift_reg #(.N(4)) signal_cleaner_east_west(
 	.clk(CLK100MHZ),
-	.s_in(BTNR | BTNL),
-	.s_out(request_out_east_west)
+	.s_in(BTNR || BTNL),
+	.s_out(car_at_roadB)
 );
 
 free_run_shift_reg #(.N(4)) signal_cleaner_north_south(
 	.clk(CLK100MHZ),
-	.s_in (BTNU | BTND),
-	.s_out(request_out_north_south)
+	.s_in (BTNU || BTND),
+	.s_out(car_at_roadA)
 	);
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,7 +95,7 @@ always_comb begin
 				nextState_TrafficLight = yellowA;
 				initializeTrafficLightTimer = 1;
 			end
-			else if(request_out_north_south & oneSecondTick & trafficLightTimer>=6) begin
+			else if( oneSecondTick & trafficLightTimer>=6 & car_at_roadB & !car_at_roadA) begin
 				nextState_TrafficLight = yellowA;
 				initializeTrafficLightTimer = 1;
 			end
@@ -110,7 +111,7 @@ always_comb begin
 		
 		redA: begin
 			roadA_RedLight = ON; roadB_RedLight = ON;
-			if (oneSecondTick & trafficLightTimer>=2) begin // 2 seconds
+			if (oneSecondTick & trafficLightTimer >= 2) begin // 2 seconds
 				nextState_TrafficLight = greenB;
 				initializeTrafficLightTimer = 1;
 			end
@@ -118,19 +119,16 @@ always_comb begin
 
 		greenB: begin
 		roadB_GreenLight = ON; roadA_RedLight = ON;
-			if(request_out_east_west & oneSecondTick & trafficLightTimer >=6) begin
+			if ( oneSecondTick & trafficLightTimer >= 9 ) begin // 6 seconds
 				nextState_TrafficLight = yellowB;
 				initializeTrafficLightTimer = 1;
 			end
-			else if (oneSecondTick & trafficLightTimer >= 9) begin // 6 seconds
+			
+			if ( oneSecondTick & trafficLightTimer >= 6 & (car_at_roadA | !car_at_roadB) ) begin // 9 seconds
 				nextState_TrafficLight = yellowB;
 				initializeTrafficLightTimer = 1;
 			end
-			else if(!request_out_east_west & !request_out_north_south) begin
-				nextState_TrafficLight = yellowB;
-				initializeTrafficLightTimer = 1;
-			end
-
+			
 
 		end
 		
