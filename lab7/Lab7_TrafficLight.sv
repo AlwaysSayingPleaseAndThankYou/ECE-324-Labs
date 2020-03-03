@@ -41,6 +41,7 @@ logic roadB_GreenLight, roadB_YellowLight, roadB_RedLight;
 logic LED_On;
 logic [7:0] sseg2, sseg1, sseg0;
 logic car_at_roadB, car_at_roadA;
+logic request_out_stop, stop_db, stop_edge;
 
 
 
@@ -60,6 +61,18 @@ free_run_shift_reg #() signal_cleaner_stop(
 	.clk(CLK100MHZ),
 	.s_in (BTNC),
 	.s_out(request_out_stop)
+	);
+
+db_fsm ourDebounce(
+	.clk(CLK100MHZ),
+	.sw (request_out_stop),
+	.db (stop_db)
+	);
+
+risingEdgeDetector ourDetect(
+	.clk(CLK100MHZ),
+	.signal    (stop_db),
+	.risingEdge(stop_edge)
 	);
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,7 +110,7 @@ always_comb begin
 	case (state_TrafficLight)
 		greenA: begin
 			roadA_GreenLight = ON; roadB_RedLight = ON;
-			if (request_out_stop) begin
+			if (stop_edge) begin
 	           nextState_TrafficLight = flashRedOn;
 	           initializeTrafficLightTimer = 1;
             end
@@ -114,7 +127,7 @@ always_comb begin
 		yellowA: begin
 			roadA_YellowLight = ON; roadB_RedLight = ON;
 			roadA_GreenLight = ON; roadB_RedLight = ON;
-			if (request_out_stop) begin
+			if (stop_edge) begin
 	           nextState_TrafficLight = flashRedOn;
 	           initializeTrafficLightTimer = 1;
             end
@@ -126,7 +139,7 @@ always_comb begin
 		
 		redA: begin
 			roadA_RedLight = ON; roadB_RedLight = ON;
-			if (request_out_stop) begin
+			if (stop_edge) begin
 	           nextState_TrafficLight = flashRedOn;
 	           initializeTrafficLightTimer = 1;
             end
@@ -139,7 +152,7 @@ always_comb begin
 		greenB: begin
 		roadB_GreenLight = ON; roadA_RedLight = ON;
 		
-	        if (request_out_stop) begin
+	        if (stop_edge) begin
 	           nextState_TrafficLight = flashRedOn;
 	           initializeTrafficLightTimer = 1;
             end	
@@ -157,7 +170,7 @@ always_comb begin
 		
 		yellowB: begin
 			roadB_YellowLight = ON; roadA_RedLight = ON;
-			if (request_out_stop) begin
+			if (stop_edge) begin
 	           nextState_TrafficLight = flashRedOn;
 	           initializeTrafficLightTimer = 1;
             end
@@ -169,7 +182,7 @@ always_comb begin
 		
 		redB: begin
 			roadB_RedLight = ON; roadA_RedLight = ON;
-			if (request_out_stop) begin
+			if (stop_edge) begin
 	           nextState_TrafficLight = flashRedOn;
 	           initializeTrafficLightTimer = 1;
             end
@@ -181,7 +194,7 @@ always_comb begin
 		
 		flashRedOn: begin
 	       roadB_RedLight = ON; roadA_RedLight = ON;
-	       if (request_out_stop) begin
+	       if (stop_edge) begin
 	           nextState_TrafficLight = yellowB;
 		       initializeTrafficLightTimer = 1;
 	       end
@@ -194,7 +207,7 @@ always_comb begin
 
         flashRedOff: begin
 	       roadB_RedLight = OFF; roadA_RedLight = OFF;
-	       if (request_out_stop) begin
+	       if (stop_edge) begin
 		      nextState_TrafficLight = yellowB;
 		      initializeTrafficLightTimer = 1;
 	       end
