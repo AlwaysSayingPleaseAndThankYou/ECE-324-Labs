@@ -47,13 +47,13 @@ logic car_at_roadB, car_at_roadA;
 free_run_shift_reg #(.N(4)) signal_cleaner_east_west(
 	.clk(CLK100MHZ),
 	.s_in(BTNR || BTNL),
-	.s_out(car_at_roadB)
+	.s_out(car_at_roadA)
 );
 
 free_run_shift_reg #(.N(4)) signal_cleaner_north_south(
 	.clk(CLK100MHZ),
 	.s_in (BTNU || BTND),
-	.s_out(car_at_roadA)
+	.s_out(car_at_roadB)
 	);
 	
 free_run_shift_reg #() signal_cleaner_stop(
@@ -113,7 +113,7 @@ always_comb begin
 		
 		yellowA: begin
 			roadA_YellowLight = ON; roadB_RedLight = ON;
-			roadA_GreenLight = ON; roadB_RedLight = ON;
+			
 			if (request_out_stop) begin
 	           nextState_TrafficLight = flashRedOn;
 	           initializeTrafficLightTimer = 1;
