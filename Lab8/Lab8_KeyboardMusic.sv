@@ -258,6 +258,7 @@ always_ff @(posedge CLK100MHZ) begin
 		8'h5B: fccw <= 8418; // ] = G5  = 783.991 Hz
 		8'h5A: fccw <= 8418; //Ent= G5  = 783.991 Hz
 		8'h66: fccw <= 8919; //BkS= G#5 = 830.609 Hz
+		8'h5C: fccw <= 9448; // \ = A5  = 880     Hz
 		// insert here your calculation of the carrier frequency control word (fccw) of the note A5
 	  default: fccw <= 524288; // 48828 Hz (above human hearing range) if any other key pressed
 	endcase
