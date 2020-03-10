@@ -167,19 +167,19 @@ always_comb begin
 			if (rx_done_tick ) begin
 				if(rxData==CTRL_BYTE) begin 
 					increaseVolume =1; 
-					nextState <= idle
+					nextState = idle
 				end
 				else if(BREAK_BYTE) begin 
-					nextState <= BREAK_BYTE_AFTER_EXT_BYTE;
+					nextState = BREAK_BYTE_AFTER_EXT_BYTE;
 					end
-				else nextState <= idle;
+				else nextState = idle;
 			end
 		end
 		
 		BREAK_BYTE_AFTER_EXT_BYTE: begin
 			if(rx_done_tick) begin
 				keyReleased =1;
-				nextState <= idle;
+				nextState = idle;
 			end
 		end
 
