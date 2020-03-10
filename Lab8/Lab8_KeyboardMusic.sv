@@ -138,7 +138,7 @@ always_comb begin
             if (rx_done_tick) begin
                 if (rxData == CTRL_BYTE) decreaseVolume = 1; // Pushing Ctrl key causes decrease in volume; releasing Ctrl key does nothing
                 // WHEN ADDING TWO NEW STATES TO GENERATE increaseVolume, ALSO UNCOMMENT THE FOLLOWING LINE
-                // else if (rxData == EXT_BYTE) nextState = EXT_BYTE_AFTER_IDLE; // received start of extended key sequence
+                else if (rxData == EXT_BYTE) nextState = EXT_BYTE_AFTER_IDLE; // received start of extended key sequence
                 else if (rxData == BREAK_BYTE) nextState = BREAK_BYTE_AFTER_IDLE; // proceed to complete the break code sequence
                 else begin
                     keyPushed = 1; // key being pushed will start the sound
@@ -162,19 +162,27 @@ always_comb begin
 		BREAK_BYTE_AFTER_IDLE: begin
 		    if (rx_done_tick) nextState = IDLE; // this state completes the break code sequence, so the second byte isn't interpreted as a make code.
 		end
-/*		
+		
 		EXT_BYTE_AFTER_IDLE: begin
-			.
-			.
-			.
+			if (rx_done_tick ) begin
+				if(rxData==CTRL_BYTE) begin 
+					increaseVolume =1; 
+					nextState <= idle
+				end
+				else if(BREAK_BYTE) begin 
+					nextState <= BREAK_BYTE_AFTER_EXT_BYTE;
+					end
+				else nextState <= idle;
+			end
 		end
 		
 		BREAK_BYTE_AFTER_EXT_BYTE: begin
-			.
-			.
-			.
+			if(rx_done_tick) begin
+				keyReleased =1;
+				nextState <= idle;
+			end
 		end
-*/
+
 	endcase
 end
 
