@@ -167,19 +167,19 @@ always_comb begin
 			if (rx_done_tick ) begin
 				if(rxData==CTRL_BYTE) begin 
 					increaseVolume =1; 
-					nextState = idle
+					nextState = IDLE;
 				end
 				else if(BREAK_BYTE) begin 
 					nextState = BREAK_BYTE_AFTER_EXT_BYTE;
 					end
-				else nextState = idle;
+				else nextState = IDLE;
 			end
 		end
 		
 		BREAK_BYTE_AFTER_EXT_BYTE: begin
 			if(rx_done_tick) begin
 				keyReleased =1;
-				nextState = idle;
+				nextState = IDLE;
 			end
 		end
 
@@ -195,10 +195,10 @@ assign SW = {SW15,SW14,SW13,SW12,SW11,SW10,SW9,SW8,SW7,SW6,SW5,SW4,SW3,SW2,SW1,S
 	// This has to do with specifying different voltages for different switches, but students can ignore this.
 
 always_ff @(posedge CLK100MHZ) begin
-	if (BTNL) atk_step  <= {16'b0,SW[15:0]}; // set SW[15:0] (in hex) to 21.475 / attack time (in seconds)
+	if (BTNL) atk_step  <= {16'b0,SW[15:0]}; // set SW[15:0] (in hex) to 21.475 / attack time (in seconds) // set 21 in sitches 0b10101
 	if (BTNU) dcy_step  <= {16'b0,SW[15:0]}; // set SW[15:0] (in hex) to 21.475 / decay time (in seconds) * (1 - ratio to maximum volume)
-	if (BTNC) sus_level <= {SW[15:0],16'b0}; // set SW[15:0] (in hex) to 32768 * ratio to maximum volume
-	if (BTND) sus_time  <= {SW[15:0],16'b0}; // set SW[15:0] (in hex) to 1526 * sustain time (in seconds)
+	if (BTNC) sus_level <= {SW[15:0],16'b0}; // set SW[15:0] (in hex) to 32768 * ratio to maximum volume //set to 0b 0011 1111 1101 0011
+	if (BTND) sus_time  <= {SW[15:0],16'b0}; // set SW[15:0] (in hex) to 1526 * sustain time (in seconds) //0b0000 0101 1111 0110
 	if (BTNR) rel_step  <= {16'b0,SW[15:0]}; // set SW[15:0] (in hex) to 21.475 / release time (in seconds) * ratio to maximum volume
 	if (BTNL & (SW[15:0] == 16'hFFFF)) atk_step <= 32'hFFFFFFFF; // all on code to enable adsr's bypass functionality
 end
